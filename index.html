@@ -449,7 +449,7 @@
 						for(var i = 0, len = colorTheme.length; i < len; i++) {
 							var display = 'none';
 
-							if (initBKColor == colorTheme[i].value) {
+							if (Util.RGB2HEX(initBKColor) == colorTheme[i].value) {
 								display = "";
 							}
 							Dom.theme_list.append('<div class="bk-container" style="background-color:' + colorTheme[i].value + '; color:' + colorTheme[i].font + '"><div class="bk-container-current" style="display:' + display +'"></div></div>');
@@ -497,10 +497,6 @@
 						}
 					});
 
-					$('#night-button').click(function() {
-						//todo 触发背景切换事件
-					})
-
 					Dom.font_button.click(function() {
 						if(Dom.font_container.css('display') == 'none') {
 							Dom.font_container.show();
@@ -509,7 +505,7 @@
 							Dom.font_container.hide();
 							Dom.font_button.removeClass('current');
 						}
-					})
+					});
 
 					$('#large-font').click(function() {
 						if(initFontSize > 20) {
@@ -537,6 +533,7 @@
 					});
 
 					Dom.theme_list.delegate('.bk-container', 'click', function() {
+
 							var bkColor = $(this).css('background-color');
 							var fontColor = $(this).css('color');
 							Dom.theme_list.find('.bk-container-current').hide();
@@ -545,17 +542,55 @@
 							$('body').css('background-color', bkColor);
 							RootContainer.css('color', fontColor);
 
-							Util.StorageSetter('background_color', bkColor);
-							Util.StorageSetter('font_color', fontColor);
-
 							if((Util.RGB2HEX(fontColor) == '#4e534f')||(Util.RGB2HEX(fontColor) == '#7685a2')) {
 								$('#night_icon').show();
 								$('#day_icon').hide();
+								Util.StorageSetter('last_night', bkColor);
 							} else {
 								$('#night_icon').hide();
 								$('#day_icon').show();
+								Util.StorageSetter('last_day', bkColor);
 							}
+
+							Util.StorageSetter('background_color', bkColor);
+							Util.StorageSetter('font_color', fontColor);
 					});
+
+					$('#night-button').click(function() {
+						//todo 触发背景切换事件
+						var fontColor = RootContainer.css('color');
+						var BKColor = $('body').css('background-color');
+						var toThemeBtn = null;
+
+						if((Util.RGB2HEX(fontColor) == '#4e534f')||(Util.RGB2HEX(fontColor) == '#7685a2')) {
+							$('#night_icon').hide();
+							$('#day_icon').show();
+
+							Dom.theme_list.find('.bk-container').each(function() {
+								if($(this).css('background-color') == Util.StorageGetter('last_day')) {
+									toThemeBtn = $(this);
+								}
+							});
+						} else {
+							$('#night_icon').show();
+							$('#day_icon').hide();
+
+							Dom.theme_list.find('.bk-container').each(function() {
+								if($(this).css('background-color') == Util.StorageGetter('last_night')) {
+									toThemeBtn = $(this);
+								}
+							});
+						}
+
+						Dom.theme_list.find('.bk-container-current').hide();
+						toThemeBtn.find('.bk-container-current').show();
+
+						$('body').css('background-color', toThemeBtn.css('background-color'));
+						RootContainer.css('color', toThemeBtn.css('color'));
+
+						Util.StorageSetter('background_color', toThemeBtn.css('background-color'));
+						Util.StorageSetter('font_color', toThemeBtn.css('color'));
+					})
 				}
 
 				main();
