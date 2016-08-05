@@ -366,7 +366,8 @@
 						return localStorage.setItem(prefix + key, val);
 					}
 
-					var RGB2HEX = function(orig) {
+					var RGB2HEX = function(str) {
+						var orig = "" + str;
 						var rgb = orig.replace(/\s/g,'').match(/^rgba?\((\d+),(\d+),(\d+)/i);
 						return (rgb && rgb.length === 4) ? "#" +
 						("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
