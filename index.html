@@ -357,6 +357,7 @@
 		<script>
 			(function() {
 				var Util = (function() {
+
 					var prefix = 'html5_reader_';
 					var StorageGetter = function(key) {
 						return localStorage.getItem(prefix + key);
@@ -365,9 +366,18 @@
 						return localStorage.setItem(prefix + key, val);
 					}
 
+					var RGB2HEX = function(orig) {
+						var rgb = orig.replace(/\s/g,'').match(/^rgba?\((\d+),(\d+),(\d+)/i);
+						return (rgb && rgb.length === 4) ? "#" +
+						("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+						("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+						("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : orig;
+					}
+
 					return {
 						StorageGetter: StorageGetter,
-						StorageSetter: StorageSetter
+						StorageSetter: StorageSetter,
+						RGB2HEX:RGB2HEX
 					}
 				})();
 
@@ -398,25 +408,25 @@
 					  {
 							value : '#f7eee5',
 							name : '米白',
-							font : ''
+							font : '#000'
 						},
 
 						{
 							value : '#e9dfc7',
 							name : '纸张',
-							font : '',
+							font : '#000',
 						},
 
 						{
 							value : '#a4a4a4',
 							name : '浅灰',
-							font : ''
+							font : '#000'
 						},
 
 						{
 							value : '#cdefce',
 							name : '护眼',
-							font : ''
+							font : '#000'
 						}, 
 
 						{
@@ -442,7 +452,23 @@
 							if (initBKColor == colorTheme[i].value) {
 								display = "";
 							}
-							Dom.theme_list.append('<div class="bk-container" style="background-color:' + colorTheme[i].value + '"><div class="bk-container-current" style="display:' + display +'"></div></div>');
+							Dom.theme_list.append('<div class="bk-container" style="background-color:' + colorTheme[i].value + '; color:' + colorTheme[i].font + '"><div class="bk-container-current" style="display:' + display +'"></div></div>');
+						}
+
+						if(initBKColor) {
+							$('body').css('background-color', initBKColor);
+						}
+
+						if(initFontColor) {
+							RootContainer.css('color', initFontColor);
+						}
+
+						if((Util.RGB2HEX(initFontColor) == '#4e534f')||(Util.RGB2HEX(initFontColor) == '#7685a2')) {
+							$('#night_icon').show();
+							$('#day_icon').hide();
+						} else {
+							$('#night_icon').hide();
+							$('#day_icon').show();
 						}
 					})();
 
@@ -471,7 +497,7 @@
 						}
 					});
 
-					$('night-button').click(function() {
+					$('#night-button').click(function() {
 						//todo 触发背景切换事件
 					})
 
@@ -508,6 +534,27 @@
 						Dom.bottom_nav.hide();
 						Dom.font_container.hide();
 						Dom.font_button.removeClass('current');
+					});
+
+					Dom.theme_list.delegate('.bk-container', 'click', function() {
+							var bkColor = $(this).css('background-color');
+							var fontColor = $(this).css('color');
+							Dom.theme_list.find('.bk-container-current').hide();
+							$(this).find('.bk-container-current').show();
+
+							$('body').css('background-color', bkColor);
+							RootContainer.css('color', fontColor);
+
+							Util.StorageSetter('background_color', bkColor);
+							Util.StorageSetter('font_color', fontColor);
+
+							if((Util.RGB2HEX(fontColor) == '#4e534f')||(Util.RGB2HEX(fontColor) == '#7685a2')) {
+								$('#night_icon').show();
+								$('#day_icon').hide();
+							} else {
+								$('#night_icon').hide();
+								$('#day_icon').show();
+							}
 					});
 				}
 
