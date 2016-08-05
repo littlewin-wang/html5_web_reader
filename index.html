@@ -272,29 +272,6 @@
 			</div>
 	    <div id="fition_chapter_title"></div>
 	    <div id="fiction_container" class="m-read-content">
-        <h4>第004章 绝处逢生？</h4>
-        <p>
-         	从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-        	从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-        	从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-        	从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-        	从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-        	从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-        	从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-          从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。
-        </p>
-        <p>从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。</p>
-        <p>从朱莉家出来后，盛夏在招待所将就了一夜。闺蜜小雅想让盛夏住她家去，但盛夏没同意。</p>
 	    </div>
 	    <div class="m-button-bar">
 	        <ul class="u-tab">
@@ -375,10 +352,24 @@
 						("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : orig;
 					}
 
+					var getJSONP = function(url, callback) {
+						return $.jsonp({
+							url: url,
+							cache: true,
+							callback: 'duokan_fiction_chapter',
+							success: function(result) {
+								var data = $.base64.decode(result);
+								var json = decodeURIComponent(escape(data));
+								callback(json);
+							}
+						})
+					}
+
 					return {
 						StorageGetter: StorageGetter,
 						StorageSetter: StorageSetter,
-						RGB2HEX:RGB2HEX
+						RGB2HEX: RGB2HEX,
+						getJSONP: getJSONP
 					}
 				})();
 
@@ -389,6 +380,9 @@
 						font_button: $('#font-button'),
 						theme_list: $('#bk-theme-list')
 					}
+
+				var readerModel;
+				var readerUI;
 
 				var Win = $(window);
 				var Doc = $(document);
@@ -402,6 +396,11 @@
 
 				function main() {
 					//todo 整个项目的入口函数
+					readerModel = ReaderModel();
+					readerUI = ReaderBaseFrame(RootContainer);
+					readerModel.init(function(data) {
+						readerUI(data);
+					});
 
 					(function() {
 
@@ -476,12 +475,80 @@
 					EventHandler();
 				}
 
-				function ReaderMode() {
+				function ReaderModel() {
 					//todo 实现和阅读器相关的数据交互方法
+					var Chapter_id;
+					var ChapterTotal;
+
+					var init = function(UIcallback) {
+						getFictionInfo(function() {
+							getCurChapterContent(Chapter_id, function(data) {
+								UIcallback && UIcallback(data);
+							});
+						});
+					}
+					var getFictionInfo = function(callback) {
+						$.get('data/chapter.json', function(data){
+							//todo 获得章节信息之后的回调
+							Chapter_id = data.chapters[1].chapter_id;
+							ChapterTotal = data.chapters.length;
+							callback && callback();
+						}, 'json');
+					}
+
+					var getCurChapterContent = function(chapter_id, callback) {
+						//todo 渲染基本的UI结构
+						$.get('data/data' + Chapter_id + '.json', function(data){
+								if(data.result == 0) {
+									var url = data.jsonp;
+									Util.getJSONP(url, function(data) {
+										callback && callback(data);
+									});
+								}
+						}, 'json')
+					}
+
+					var prevChapter = function(UIcallback) {
+						Chapter_id = parseInt(Chapter_id, 10);
+						if(Chapter_id == 0) {
+							return;
+						}
+
+						Chapter_id -= 1;
+						getCurChapterContent(Chapter_id, UIcallback);
+					}
+
+					var nextChapter = function(UIcallback) {
+						Chapter_id = parseInt(Chapter_id, 10);
+						if(Chapter_id == ChapterTotal) {
+							return;
+						}
+
+						Chapter_id += 1;
+						getCurChapterContent(Chapter_id, UIcallback);
+					}
+
+					return {
+						init: init,
+						prevChapter: prevChapter,
+						nextChapter: nextChapter
+					}
 				}
 
-				function ReaderBaseFrame() {
+				function ReaderBaseFrame(container) {
 					//todo 渲染基本的UI结构
+					function parseChapterData(jsonData) {
+						var jsonObj = JSON.parse(jsonData);
+						var html = '<h4>' + jsonObj.t + '</h4>';
+						for (var i = 0; i < jsonObj.p.length; i++) {
+							html += '<p>' + jsonObj.p[i] + '</p>';
+						}
+						return html;
+					}
+
+					return function(data) {
+						container.html(parseChapterData(data));
+					}
 				}
 
 				function EventHandler() {
@@ -591,7 +658,19 @@
 
 						Util.StorageSetter('background_color', toThemeBtn.css('background-color'));
 						Util.StorageSetter('font_color', toThemeBtn.css('color'));
-					})
+					});
+
+					$('#prev_button').click(function() {
+						readerModel.prevChapter(function(data) {
+							readerUI(data);
+						});
+					});
+
+					$('#next_button').click(function() {
+						readerModel.nextChapter(function(data) {
+							readerUI(data);
+						});
+					});
 				}
 
 				main();
