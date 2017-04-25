@@ -31,9 +31,45 @@ app.use(controller.get('/api_test', function*() {
   this.body = service.get_test_data();
 }));
 
+app.use(controller.get('/ajax/index', function*() {
+  this.set('Cache-Control', 'no-cache');
+  this.body = service.get_index_data();
+}));
+
+app.use(controller.get('/ajax/rank', function*() {
+  this.set('Cache-Control', 'no-cache');
+  this.body = service.get_rank_data();
+}));
+
+var querystring = require('querystring');
+
+app.use(controller.get('/ajax/book', function*() {
+  this.set('Cache-Control', 'no-cache');
+  var params = querystring.parse(this.req._parsedUrl.query);
+  var id = params.id;
+  if(!id) {
+    id = '';
+  }
+  this.body = service.get_book_data(id);
+}));
+
+app.use(controller.get('/ajax/category', function*(){
+  this.set('Cache-Control', 'no-cache');
+  this.body = service.get_category_data();
+}));
+
+app.use(controller.get('/ajax/male', function*(){
+  this.set('Cache-Control', 'no-cache');
+  this.body = service.get_male_data();
+}));
+
+app.use(controller.get('/ajax/female', function*(){
+  this.set('Cache-Control', 'no-cache');
+  this.body = service.get_female_data();
+}));
+
 app.use(controller.get('/ajax/search', function*() {
   this.set('Cache-Control', 'no-cache');
-  var querystring = require('querystring');
   var params = querystring.parse(this.req._parsedUrl.query);
   var start = params.start;
   var end = params.end;
