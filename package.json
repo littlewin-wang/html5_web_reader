@@ -1,0 +1,35 @@
+{
+  "name": "html5_web_reader",
+  "version": "1.0.0",
+  "description": "A web reader based on Vue.js & Koa.",
+  "main": "app.js",
+  "dependencies": {
+    "co-views": "^2.1.0",
+    "auto-reload": "^0.0.2",
+    "koa": "^1.2.0",
+    "ejs": "^2.4.2",
+    "koa-route": "^2.4.2",
+    "koa-views": "^4.1.0",
+    "koa-static-server": "^0.1.8",
+    "webpack": "^1.13.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/littlewin-wang/html5_web_reader.git"
+  },
+  "keywords": [
+    "web_reader",
+    "vue",
+    "koa"
+  ],
+  "author": "littlewin <littlewin.wang@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/littlewin-wang/html5_web_reader/issues"
+  },
+  "homepage": "https://github.com/littlewin-wang/html5_web_reader#readme"
+}
