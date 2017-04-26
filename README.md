@@ -2,10 +2,10 @@
 一个慕课网的实例教程-基于HTML5的WEB阅读器
 
 ## Demo
-<img src="https://github.com/littlewin-wang/html5_web_reader/blob/master/preview/index.png?raw=true" width="30%" height="30%">
-<img src="https://github.com/littlewin-wang/html5_web_reader/blob/master/preview/bookshelf.png?raw=true" width="30%" height="30%">
-<img src="https://github.com/littlewin-wang/html5_web_reader/blob/master/preview/rank.png?raw=true" width="30%" height="30%">
-<img src="https://github.com/littlewin-wang/html5_web_reader/blob/master/preview/user-info.png?raw=true" width="30%" height="30%">
+![](https://github.com/littlewin-wang/html5_web_reader/blob/master/preview/index.png?raw=true)
+![](https://github.com/littlewin-wang/html5_web_reader/blob/master/preview/bookshelf.png?raw=true)
+![](https://github.com/littlewin-wang/html5_web_reader/blob/master/preview/rank.png?raw=true)
+![](https://github.com/littlewin-wang/html5_web_reader/blob/master/preview/user-info.png?raw=true)
 
 ## Feature
 
